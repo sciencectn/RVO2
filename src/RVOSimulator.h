@@ -207,8 +207,9 @@ namespace RVO {
 		 * \brief      Lets the simulator perform a simulation step and updates the
 		 *             two-dimensional position and two-dimensional velocity of
 		 *             each agent.
+		 * \param      move_agents Move the simulator forward in time, otherwise just calculate new velocities
 		 */
-		void doStep();
+		void doStep(bool move_agents= false);
 
 		/**
 		 * \brief      Returns the specified agent neighbor of the specified
@@ -322,6 +323,13 @@ namespace RVO {
 		 * \return     The present two-dimensional preferred velocity of the agent.
 		 */
 		const Vector2 &getAgentPrefVelocity(size_t agentNo) const;
+
+		/**
+		 * Get the safe velocity that was computed
+		 * @param agentNo
+		 * @return
+		 */
+		const Vector2 &getAgentSafeVelocity(size_t agentNo) const;
 
 		/**
 		 * \brief      Returns the radius of a specified agent.

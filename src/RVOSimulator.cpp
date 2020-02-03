@@ -160,7 +160,7 @@ namespace RVO {
 		return obstacleNo;
 	}
 
-	void RVOSimulator::doStep()
+	void RVOSimulator::doStep(bool move_agents)
 	{
 		kdTree_->buildAgentTree();
 
@@ -172,14 +172,16 @@ namespace RVO {
 			agents_[i]->computeNewVelocity();
 		}
 
+		if(move_agents) {
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-		for (int i = 0; i < static_cast<int>(agents_.size()); ++i) {
-			agents_[i]->update();
-		}
+            for (int i = 0; i < static_cast<int>(agents_.size()); ++i) {
+                agents_[i]->update();   //update agent positions based on new velocities
+            }
 
-		globalTime_ += timeStep_;
+            globalTime_ += timeStep_;
+        }
 	}
 
 	size_t RVOSimulator::getAgentAgentNeighbor(size_t agentNo, size_t neighborNo) const
@@ -235,6 +237,10 @@ namespace RVO {
 	const Vector2 &RVOSimulator::getAgentPrefVelocity(size_t agentNo) const
 	{
 		return agents_[agentNo]->prefVelocity_;
+	}
+
+	const Vector2 &RVOSimulator::getAgentSafeVelocity(size_t agentNo) const {
+	    return agents_[agentNo]->newVelocity_;
 	}
 
 	float RVOSimulator::getAgentRadius(size_t agentNo) const
