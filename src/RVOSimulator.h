@@ -212,17 +212,6 @@ namespace RVO {
 		void doStep(bool move_agents= false);
 
 		/**
-		 * \brief      Returns the specified agent neighbor of the specified
-		 *             agent.
-		 * \param      agentNo         The number of the agent whose agent
-		 *                             neighbor is to be retrieved.
-		 * \param      neighborNo      The number of the agent neighbor to be
-		 *                             retrieved.
-		 * \return     The number of the neighboring agent.
-		 */
-		size_t getAgentAgentNeighbor(size_t agentNo, size_t neighborNo) const;
-
-		/**
 		 * \brief      Returns the maximum neighbor count of a specified agent.
 		 * \param      agentNo         The number of the agent whose maximum
 		 *                             neighbor count is to be retrieved.
