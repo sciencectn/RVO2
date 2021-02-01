@@ -55,6 +55,10 @@ namespace RVO {
                 float time_horizon
         );
 
+        Vector2 get_safe_velocity();
+        size_t get_num_neighbors() const;
+        float get_squared_sensing_radius() const;
+
     private:
         /**
          * \brief      Constructs an agent instance.
@@ -73,13 +77,16 @@ namespace RVO {
          */
         void computeNewVelocity();
 
+
+
         /**
          * \brief      Inserts an agent neighbor into the set of neighbors of
          *             this agent.
          * \param      agent           A pointer to the agent to be inserted.
-         * \param      sensing_radius         The squared range around this agent.
+         * \param      sensing_radius_sqr         The squared range around this agent.
          */
-        void insertAgentNeighbor(const Agent *agent, float &sensing_radius);
+        void insertAgentNeighbor(const Agent *agent, float sensing_radius_sqr);
+        void insertAgentNeighbor(const Agent *agent);
 
         /**
          * \brief      Inserts a static obstacle neighbor into the set of neighbors

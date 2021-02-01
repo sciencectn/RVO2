@@ -378,11 +378,15 @@ namespace RVO {
         }
     }
 
-    void Agent::insertAgentNeighbor(const Agent *agent, float &sensing_radius) {
+    void Agent::insertAgentNeighbor(const Agent *agent) {
+        insertAgentNeighbor(agent, get_squared_sensing_radius());
+    }
+
+    void Agent::insertAgentNeighbor(const Agent *agent, float sensing_radius_sqr) {
         if (this != agent) {
             const float distSq = absSq(position_ - agent->position_);
 
-            if (distSq < sensing_radius) {
+            if (distSq < sensing_radius_sqr) {
                 if (agentNeighbors_.size() < maxNeighbors_) {
                     agentNeighbors_.push_back(std::make_pair(distSq, agent));
                 } else {
@@ -424,6 +428,10 @@ namespace RVO {
     void Agent::update() {
         velocity_ = newVelocity_;
         position_ += velocity_ * sim_->timeStep_;
+    }
+
+    float Agent::get_squared_sensing_radius() const {
+        return sqr(sensing_range_)
     }
 
     bool linearProgram1(const std::vector<Line> &lines, size_t lineNo, float radius, const Vector2 &optVelocity,
