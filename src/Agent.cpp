@@ -379,18 +379,18 @@ namespace RVO {
     }
 
     void Agent::insertAgentNeighbor(const Agent *agent) {
-        insertAgentNeighbor(agent, get_squared_sensing_radius());
+        float r = get_squared_sensing_radius();
+        insertAgentNeighbor(agent, r);
     }
 
-    void Agent::insertAgentNeighbor(const Agent *agent, float sensing_radius_sqr) {
+    void Agent::insertAgentNeighbor(const Agent *agent, float &sensing_radius_sqr)
+    {
         if (this != agent) {
             const float distSq = absSq(position_ - agent->position_);
 
             if (distSq < sensing_radius_sqr) {
                 if (agentNeighbors_.size() < maxNeighbors_) {
                     agentNeighbors_.push_back(std::make_pair(distSq, agent));
-                } else {
-                    throw std::runtime_error("Max number of agents exceeded");
                 }
 
                 size_t i = agentNeighbors_.size() - 1;
@@ -402,6 +402,9 @@ namespace RVO {
 
                 agentNeighbors_[i] = std::make_pair(distSq, agent);
 
+                if (agentNeighbors_.size() == maxNeighbors_) {
+                    sensing_radius_sqr = agentNeighbors_.back().first;
+                }
             }
         }
     }

@@ -85,7 +85,7 @@ namespace RVO {
          * \param      agent           A pointer to the agent to be inserted.
          * \param      sensing_radius_sqr         The squared range around this agent.
          */
-        void insertAgentNeighbor(const Agent *agent, float sensing_radius_sqr);
+        void insertAgentNeighbor(const Agent *agent, float &sensing_radius_sqr);
         void insertAgentNeighbor(const Agent *agent);
 
         /**
