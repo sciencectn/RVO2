@@ -511,6 +511,10 @@ namespace RVO {
         prefVelocity_ = vel;
     }
 
+    void Agent::set_velocity(const Vector2 & vel){
+        velocity_ = vel;
+    }
+
     bool linearProgram1(const std::vector<Line> &lines, size_t lineNo, float radius, const Vector2 &optVelocity,
                         bool directionOpt, Vector2 &result) {
         const float dotProduct = lines[lineNo].point * lines[lineNo].direction;

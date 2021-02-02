@@ -67,6 +67,7 @@ namespace RVO {
         void delete_neighbors();
         void insertAgentNeighbor(Agent *agent);
         void set_state(const Vector2 &, const Vector2 &);
+        void set_velocity(const Vector2 &);
 
     private:
         /**
