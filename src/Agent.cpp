@@ -37,9 +37,17 @@
 
 namespace RVO {
     Agent::Agent(RVOSimulator *sim) : maxNeighbors_(0), maxSpeed_(0.0f), sensing_range_(0.0f), radius_(0.0f), sim_(sim),
-                                      timeHorizon_(0.0f), timeHorizonObst_(0.0f) {}
+                                      timeHorizon_(0.0f), timeHorizonObst_(0.0f) {
+        sim_dt_ = std::numeric_limits<float>::signaling_NaN();
+    }
 
-    Agent::Agent(const Vector2 &position, const Vector2 &velocity, float vmax, float radius, float time_horizon) {
+    Agent::Agent(
+            const Vector2 &position,
+            const Vector2 &velocity,
+            float vmax,
+            float radius,
+            float time_horizon,
+            float dt) {
         position_ = position;
         velocity_ = velocity;
         prefVelocity_ = velocity;
@@ -61,6 +69,10 @@ namespace RVO {
             throw std::runtime_error("invalid time horizon");
         timeHorizon_ = time_horizon;
         timeHorizonObst_ = time_horizon;
+
+        if(dt <= 0)
+            throw std::runtime_error("invalid timestep");
+        sim_dt_ = dt;
     }
 
     void Agent::computeNeighbors() {
@@ -367,7 +379,11 @@ namespace RVO {
                 }
             } else {
                 /* Collision. Project on cut-off circle of time timeStep. */
-                const float invTimeStep = 1.0f / sim_->timeStep_;
+                float invTimeStep;
+                if(sim_ != nullptr)
+                    invTimeStep = 1.0f / sim_->timeStep_;
+                else
+                    invTimeStep = 1.0f / sim_dt_;
 
                 /* Vector from cutoff center to relative velocity. */
                 const Vector2 w = relativeVelocity - invTimeStep * relativePosition;
@@ -390,12 +406,12 @@ namespace RVO {
         }
     }
 
-    void Agent::insertAgentNeighbor(const Agent *agent) {
+    void Agent::insertAgentNeighbor(Agent *agent) {
         float r = get_squared_sensing_radius();
         insertAgentNeighbor(agent, r);
     }
 
-    void Agent::insertAgentNeighbor(const Agent *agent, float &sensing_radius_sqr)
+    void Agent::insertAgentNeighbor(Agent *agent, float &sensing_radius_sqr)
     {
         if (this != agent) {
             const float distSq = absSq(position_ - agent->position_);
@@ -480,6 +496,13 @@ namespace RVO {
 
     float Agent::get_time_horizon() const {
         return timeHorizon_;
+    }
+
+    float Agent::get_dt() const {
+        if(sim_ != nullptr)
+            return sim_->timeStep_;
+        else
+            return sim_dt_;
     }
 
     void Agent::set_state(const Vector2 & pos, const Vector2 & vel) {
