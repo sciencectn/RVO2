@@ -55,9 +55,16 @@ namespace RVO {
                 float time_horizon
         );
 
-        Vector2 get_safe_velocity();
-        size_t get_num_neighbors() const;
+        Vector2 get_safe_velocity(const Vector2 & desired_velocity);
+        Agent *get_neighbor(size_t);
         float get_squared_sensing_radius() const;
+        float get_vmax() const;
+        float get_radius() const;
+        float get_time_horizon() const;
+        size_t get_num_neighbors() const;
+        void delete_neighbors();
+        void insertAgentNeighbor(const Agent *agent);
+        void set_state(const Vector2 &, const Vector2 &);
 
     private:
         /**
@@ -86,7 +93,6 @@ namespace RVO {
          * \param      sensing_radius_sqr         The squared range around this agent.
          */
         void insertAgentNeighbor(const Agent *agent, float &sensing_radius_sqr);
-        void insertAgentNeighbor(const Agent *agent);
 
         /**
          * \brief      Inserts a static obstacle neighbor into the set of neighbors
@@ -103,7 +109,7 @@ namespace RVO {
          */
         void update();
 
-        std::vector<std::pair<float, const Agent *> > agentNeighbors_;
+        std::vector<std::pair<float, Agent *> > agentNeighbors_;
         size_t maxNeighbors_;
         float maxSpeed_;
         float sensing_range_;

@@ -42,11 +42,23 @@ namespace RVO {
     Agent::Agent(const Vector2 &position, const Vector2 &velocity, float vmax, float radius, float time_horizon) {
         position_ = position;
         velocity_ = velocity;
+        prefVelocity_ = velocity;
         maxNeighbors_ = 32;
+
+        if(vmax < 0)
+            throw std::runtime_error("invalid vmax");
         maxSpeed_ = vmax;
+
         sensing_range_ = 1e6;   // assume that sensing limitations are handled elsewhere
+
+        if(radius < 0)
+            throw std::runtime_error("invalid radius");
         radius_ = radius;
+
         sim_ = nullptr;
+
+        if(time_horizon < 0)
+            throw std::runtime_error("invalid time horizon");
         timeHorizon_ = time_horizon;
         timeHorizonObst_ = time_horizon;
     }
@@ -433,8 +445,47 @@ namespace RVO {
         position_ += velocity_ * sim_->timeStep_;
     }
 
+    void Agent::delete_neighbors() {
+        for(auto range_agent : agentNeighbors_){
+            delete range_agent.second;
+        }
+        agentNeighbors_.clear();
+    }
+
+    Vector2 Agent::get_safe_velocity(const Vector2 & desired_velocity) {
+        prefVelocity_ = desired_velocity;
+        computeNewVelocity();
+        return newVelocity_;
+    }
+
+    Agent *Agent::get_neighbor(size_t i) {
+        return agentNeighbors_[i].second;
+    }
+
     float Agent::get_squared_sensing_radius() const {
-        return sqr(sensing_range_)
+        return sqr(sensing_range_);
+    }
+
+    size_t Agent::get_num_neighbors() const {
+        return agentNeighbors_.size();
+    }
+
+    float Agent::get_vmax() const {
+        return maxSpeed_;
+    }
+
+    float Agent::get_radius() const {
+        return radius_;
+    }
+
+    float Agent::get_time_horizon() const {
+        return timeHorizon_;
+    }
+
+    void Agent::set_state(const Vector2 & pos, const Vector2 & vel) {
+        position_ = pos;
+        velocity_ = vel;
+        prefVelocity_ = vel;
     }
 
     bool linearProgram1(const std::vector<Line> &lines, size_t lineNo, float radius, const Vector2 &optVelocity,
