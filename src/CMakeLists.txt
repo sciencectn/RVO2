@@ -45,7 +45,7 @@ set(RVO_SOURCES
 	Obstacle.h
 	RVOSimulator.cpp)
 
-add_library(RVO ${RVO_HEADERS} ${RVO_SOURCES})
+add_library(RVO SHARED ${RVO_HEADERS} ${RVO_SOURCES})
 target_include_directories(RVO PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 if(WIN32)
